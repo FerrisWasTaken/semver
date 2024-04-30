@@ -1,12 +1,20 @@
 use chumsky::{
-    error::Simple, extra, primitive::{any, choice, just}, text::{int, whitespace}, IterParser, Parser
+    error::Simple,
+    extra,
+    primitive::{any, choice, just},
+    text::{int, whitespace},
+    IterParser,
+    Parser,
 };
 
-use crate::{Version, VersionReq, Comparator};
+use crate::{Comparator, Version, VersionReq};
 
 pub(crate) fn ver<'a>() -> impl Parser<'a, &'a str, Version, extra::Err<Simple<'a, char>>> {
     let number = whitespace::<_, _, extra::Err<Simple<char>>>().ignore_then(
-        int::<&str, _, chumsky::extra::Err<Simple<char>>>(10).map(|i| i.parse::<u8>().unwrap()),
+        int::<&str, _, chumsky::extra::Err<Simple<char>>>(10).map(|i| {
+            i.parse::<u8>()
+                .unwrap()
+        }),
     );
     let suffix = just("-")
         .ignore_then(
@@ -17,18 +25,19 @@ pub(crate) fn ver<'a>() -> impl Parser<'a, &'a str, Version, extra::Err<Simple<'
         )
         .or_not();
 
-    number
+    let ver = number
         .then_ignore(just("."))
         .then(number)
         .then_ignore(just("."))
         .then(number)
         .then(suffix)
-        .map(|(((major, minor), rev), pre)| Version {
+        .map(|(((major, minor), rev), pre)| Version::Common {
             major,
             minor,
             rev,
             pre,
-        })
+        });
+    choice((ver, just("latest").map(|_| Version::Latest)))
 }
 
 pub(crate) fn ver_req<'a>() -> impl Parser<'a, &'a str, VersionReq, extra::Err<Simple<'a, char>>> {
@@ -38,16 +47,22 @@ pub(crate) fn ver_req<'a>() -> impl Parser<'a, &'a str, VersionReq, extra::Err<S
         .repeated()
         .at_least(1)
         .collect::<String>();
-    let comp = choice((just("="), just(">="), just("<="), just("<"), just(">")))
-        .padded()
-        .map(|c| Comparator::try_from(c).expect("invalid input"));
+    let comp = choice((
+        just("="),
+        just(">="),
+        just("<="),
+        just("<"),
+        just(">"),
+        just("!"),
+    ))
+    .padded()
+    .map(|c| Comparator::try_from(c).expect("invalid input"));
     let compare = comp
         .padded()
         .then(ver().padded())
         .separated_by(just(','))
         .collect::<Vec<(Comparator, Version)>>();
-    pkg.padded()
-        .or_not()
+    pkg.or_not()
         .then(compare.padded())
         .map(|(pkg, comparator)| VersionReq {
             comparator,
