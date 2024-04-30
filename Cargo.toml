@@ -7,4 +7,8 @@ edition = "2021"
 
 [dependencies]
 chumsky ={ git = "https://github.com/zesterer/chumsky.git", rev = "ef9f20f"}
+serde.workspace = true
 snafu = "0.8.2"
+
+[dev-dependencies]
+toml = "0.8.12"
