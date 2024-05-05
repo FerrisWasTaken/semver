@@ -4,7 +4,12 @@ use chumsky::{primitive::end, text::whitespace, Parser};
 
 use crate::{err::ParseError, parsers::ver};
 
+#[cfg(feature = "extism_support")]
+use extism::{FromBytes, convert::Json};
+
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "extism_support", derive(FromBytes))]
+#[cfg_attr(feature = "extism_support", encoding(Json))]
 pub enum Version {
     Common {
         major: u8,
@@ -20,7 +25,7 @@ impl Version {
     /// versioning standards. Returns `(bool, bool)` The first field is
     /// whether they are compatible. The second is whther it is unsure.
     /// It can be unsure if
-    /// 1. Either of the fields is a [`Version::Latest`]
+    /// 1. Either of the args is a [`Version::Latest`]
     /// 2. They contain a prerelease
     /// ```
     /// use semver::Version;

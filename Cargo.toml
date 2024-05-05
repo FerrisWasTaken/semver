@@ -9,6 +9,10 @@ edition = "2021"
 chumsky ={ git = "https://github.com/zesterer/chumsky.git", rev = "ef9f20f"}
 serde.workspace = true
 snafu = "0.8.2"
+extism = { version = "1.2.0", optional = true }
 
 [dev-dependencies]
 toml = "0.8.12"
+
+[features]
+extism_support = ["dep:extism"]
