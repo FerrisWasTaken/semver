@@ -4,7 +4,12 @@ use chumsky::{primitive::end, Parser};
 
 use crate::{comparator::Comparator, err::ParseError, parsers::ver_req, version::Version};
 
+#[cfg(feature = "extism_support")]
+use extism::{FromBytes, convert::Json};
+
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "extism_support", derive(FromBytes))]
+#[cfg_attr(feature = "extism_support", encoding(Json))]
 pub struct VersionReq {
     pub comparator: Vec<(Comparator, Version)>,
     pub name: Option<String>,
