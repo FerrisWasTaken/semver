@@ -1,11 +1,10 @@
 use std::fmt::Display;
 
 use chumsky::{primitive::end, Parser};
+#[cfg(feature = "extism_support")]
+use extism::{convert::Json, FromBytes};
 
 use crate::{comparator::Comparator, err::ParseError, parsers::ver_req, version::Version};
-
-#[cfg(feature = "extism_support")]
-use extism::{FromBytes, convert::Json};
 
 #[derive(Debug, PartialEq)]
 #[cfg_attr(feature = "extism_support", derive(FromBytes))]
@@ -101,7 +100,7 @@ impl VersionReq {
                     } else {
                         return false;
                     }
-                },
+                }
             }
             if !matches {
                 return false;

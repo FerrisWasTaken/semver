@@ -7,7 +7,7 @@ struct TestFile {
 
 #[derive(Debug, Deserialize, PartialEq)]
 struct Req {
-    comp: VersionReq
+    comp: VersionReq,
 }
 
 #[test]

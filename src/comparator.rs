@@ -9,7 +9,7 @@ pub enum Comparator {
     Eq,
     Lt,
     LtEq,
-    Not
+    Not,
 }
 
 impl<'a> TryFrom<&'a str> for Comparator {

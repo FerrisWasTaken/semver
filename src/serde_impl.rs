@@ -1,7 +1,9 @@
-use crate::{comparator::Comparator, version::Version, versionreq::VersionReq};
 use core::fmt;
+
 use serde::de::{Deserialize, Deserializer, Error, Visitor};
 use serde::ser::{Serialize, Serializer};
+
+use crate::{comparator::Comparator, version::Version, versionreq::VersionReq};
 
 impl Serialize for Version {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -44,8 +46,7 @@ impl<'de> Deserialize<'de> for Version {
                 formatter.write_str("semver version")
             }
 
-            fn visit_str<E: Error>(self, string: &str) -> Result<Self::Value, E>
-            {
+            fn visit_str<E: Error>(self, string: &str) -> Result<Self::Value, E> {
                 Version::try_from(string).map_err(Error::custom)
             }
         }

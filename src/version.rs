@@ -1,11 +1,10 @@
 use std::{cmp::Ordering, fmt::Display};
 
 use chumsky::{primitive::end, text::whitespace, Parser};
+#[cfg(feature = "extism_support")]
+use extism::{convert::Json, FromBytes};
 
 use crate::{err::ParseError, parsers::ver};
-
-#[cfg(feature = "extism_support")]
-use extism::{FromBytes, convert::Json};
 
 #[derive(Debug, PartialEq)]
 #[cfg_attr(feature = "extism_support", derive(FromBytes))]
@@ -143,7 +142,13 @@ impl PartialOrd for Version {
                             Some(Ordering::Less)
                         } else {
                             if pre.is_some() && o_pre.is_some() {
-                                if pre.as_ref().unwrap() == o_pre.as_ref().unwrap() {
+                                if pre
+                                    .as_ref()
+                                    .unwrap()
+                                    == o_pre
+                                        .as_ref()
+                                        .unwrap()
+                                {
                                     Some(Ordering::Equal)
                                 } else {
                                     None

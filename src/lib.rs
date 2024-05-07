@@ -2,7 +2,7 @@ mod err;
 mod parsers;
 mod serde_impl;
 
-pub use serde::{Serialize, Deserialize};
+pub use serde::{Deserialize, Serialize};
 
 pub(crate) mod comparator;
 pub(crate) mod version;
